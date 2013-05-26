@@ -14,4 +14,4 @@ a csv linkmap. Current visualization includes a force directed diagram generated
 
 Attributions
 -------------
-D3 visualization coding by [d3noob](http://bl.ocks.org/d3noob/5155181)
+D3 visualization coding based on the work of [d3noob](http://bl.ocks.org/d3noob/5155181)
