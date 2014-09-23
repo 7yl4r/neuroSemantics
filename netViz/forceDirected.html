@@ -75,15 +75,15 @@ v.domain([0, d3.max(links, function(d) { return d.value; })]);
 
 // asign a type per value to encode opacity
 links.forEach(function(link) {
-	if (v(link.value) <= 25) {
-		link.type = "twofive";
-	} else if (v(link.value) <= 50 && v(link.value) > 25) {
-		link.type = "fivezero";
-	} else if (v(link.value) <= 75 && v(link.value) > 50) {
-		link.type = "sevenfive";
-	} else if (v(link.value) <= 100 && v(link.value) > 75) {
-		link.type = "onezerozero";
-	}
+    if (v(link.value) <= 25) {
+        link.type = "twofive";
+    } else if (v(link.value) <= 50 && v(link.value) > 25) {
+        link.type = "fivezero";
+    } else if (v(link.value) <= 75 && v(link.value) > 50) {
+        link.type = "sevenfive";
+    } else if (v(link.value) <= 100 && v(link.value) > 75) {
+        link.type = "onezerozero";
+    }
 });
 
 var svg = d3.select("body").append("svg")
@@ -146,7 +146,7 @@ function tick() {
 
     node
         .attr("transform", function(d) { 
-		    return "translate(" + d.x + "," + d.y + ")"; });
+            return "translate(" + d.x + "," + d.y + ")"; });
 }
 
 // action to take on mouse click
