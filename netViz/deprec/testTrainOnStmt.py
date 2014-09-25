@@ -1,5 +1,5 @@
-import network
-from trainOnStatement import *
+from netViz.deprec import network
+from netViz.deprec.trainOnStatement import *
 import vizHandler
 
 stmt = 'sky is blue'

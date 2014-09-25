@@ -1,5 +1,5 @@
 from subprocess import Popen
-from os import kill
+
 
 class viz:
 #    def __init__(self):
@@ -20,7 +20,7 @@ class viz:
         else:
             self.showNet()
 
-     def __del__(self):
+    def __del__(self):
         self.v1.kill()
 
 # none of these seem to work:

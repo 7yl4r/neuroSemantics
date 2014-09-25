@@ -1,4 +1,10 @@
-from getInput import *
+import unittest
+
+from netViz.deprec.getInput import *
+
+class input_check(unittest.TestCase):
+    def test_add_and_check_researched_nodes(self):
+
 
 print ' === check() === '
 # no in
