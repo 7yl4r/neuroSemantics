@@ -10,7 +10,7 @@ RESP_MAX_LEN = 50  # max number of semantic concepts (words) network yields in r
 RESP_THRESH = 1000  # activation threshold which nodes must be above to be included in response
 
 DESIRED_MEAN = ACTIVATION_THRESH/3
-DESIRED_VARIANCE = ACTIVATION_THRESH/2
+DESIRED_RANGE = ACTIVATION_THRESH/2
 
 
 class NetworkState(object):
@@ -58,13 +58,15 @@ class Network(object):
         """
         :return: the mean of all connection values for dynamic param shifting
         """
-        return sum(self.nodes.values())/float(len(self.nodes))
+        return int(sum(self.connections.values())) / float(len(self.connections))
 
-    def get_connection_strength_variance(self):
+    def get_connection_strength_range(self):
         """
         :return: the variance of all connection values for dynamic param shifting
         """
-        return max(self.nodes.values()) - min(self.nodes.values())
+        maxi = max(self.connections.values()).value
+        mini = min(self.connections.values()).value
+        return int(maxi - mini), maxi, mini
 
     def learn_statement(self, stmt):
         """
@@ -100,7 +102,7 @@ class Network(object):
         interates over the entire network, propagating signals between nodes
         :param think_time: number of cycles to run the state
         """
-        self.balance_params()
+        self.redist()
         # propagate via connections
         for conn in self.connections:
             w1, w2 = unformat_connection_key(conn)
@@ -116,7 +118,7 @@ class Network(object):
             # degrade all connections over time
             connect.degrade()
 
-    def balance_params(self):
+    def balance_params(self, verbose=True):
         """
         balances parameters guiding strength increase/decreases in an attempt to achieve the
         desired distribution.
@@ -125,18 +127,47 @@ class Network(object):
         mean = self.get_connection_strength_mean()
         if mean < DESIRED_MEAN:
             # boost strengthener
-            NotImplementedError()
+            raise NotImplementedError()
         elif mean > DESIRED_MEAN:
             # boost degradation
-            NotImplementedError()
+            raise NotImplementedError()
 
-        var = self.get_connection_strength_variance()
-        if var < DESIRED_VARIANCE:
+        rng = self.get_connection_strength_range()
+        if rng < DESIRED_RANGE:
             # boost strengthening and degradation?
-            NotImplementedError()
-        # variance can't be too high?
+            raise NotImplementedError()
+        # rng can't be too high?
 
-        print 'm:', mean, '\tv:', var
+        if verbose:
+            print 'conn stren m:', mean, '\tv:', rng
+
+    def redist(self, verbose=True):
+        """
+        redistributes connection strengths to match desired distribution.
+        """
+        mean = self.get_connection_strength_mean()
+        # move all values to the mean
+        shift = DESIRED_MEAN - mean
+        #print self.connections
+        for conn in self.connections.values():
+            #print conn
+            conn.value += shift
+
+        rng, maxi, mini = self.get_connection_strength_range()
+        scale = 0
+        if rng <= 0:
+            print 'WARN: range <= 0'
+        elif rng < DESIRED_RANGE:
+            newMax = mean + DESIRED_RANGE / 2
+            newMin = mean - DESIRED_RANGE / 2
+            scale = (newMax - newMin) / (maxi - mini)
+            for conn in self.connections:
+                conn.value = (conn.value - mini) * scale + newMin
+        # rng can't be too high?
+
+        if verbose:
+            print 'conn stren m:', mean, '\tv:', rng
+            print 'adjustment m:', shift, '\tv:', scale
 
     def associate(self, w1, w2):
         """
