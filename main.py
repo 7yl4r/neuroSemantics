@@ -49,3 +49,4 @@ while True:
 
     # give the net some alone time to think... (and recover from i/o barrage)
     network.run()
+    network.state.plot_img('./net_state.jpg')
