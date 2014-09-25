@@ -2,6 +2,7 @@ __author__ = '7yl4r'
 
 from PIL import Image
 import pylab
+import math
 
 RESP_MAX_LEN = 50  # max number of semantic concepts (words) network yields in responses
 RESP_THRESH = 1000  # activation threshold which nodes must be above to be included in response
@@ -46,19 +47,21 @@ class NetworkState(object):
         puts all values in the state into an image & saves to given file
         """
         cmap = pylab.cm.get_cmap(name='spectral')
-        size = len(self.nodes) / 2 + 1
+        size = int(math.ceil(math.sqrt(len(self.nodes))))
 
         rng, mini, maxi = self.get_range()
 
         img = Image.new('RGB', (size, size), "black")  # create a new black image
         pixels = img.load()  # create the pixel map
         valus = self.nodes.values()
+        #keys = self.nodes.keys()
         for i in range(img.size[0]):    # for every pixel:
             for j in range(img.size[1]):
+                index = i*size + j
                 try:
-                    colour = cmap((valus[i + j] - mini) / (maxi - mini))
+                    #print keys[index], ':', valus[index]
+                    colour = cmap((valus[index] - mini) / (maxi - mini))
                     colour = (int(colour[0] * 255), int(colour[1] * 255), int(colour[2] * 255))
-                    print colour
                     pixels[i, j] = colour  # set the colour accordingly
                 except IndexError:
                     continue
