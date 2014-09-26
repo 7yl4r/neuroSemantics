@@ -1,0 +1,13 @@
+sky is blue.
+grass is green.
+blue is color.
+green is color.
+yellow is color.
+red is color.
+orange is color.
+grass has leaves.
+leaves are green.
+water is blue.
+sky is cloudy.
+clouds are white.
+clouds are water.

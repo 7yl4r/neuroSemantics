@@ -1,6 +1,9 @@
 from Connection import Connection
 from NetworkState import NetworkState
 
+import glob
+import os
+
 # TODO: add MAX_CONNECTIONS, preallocate connections dict, and then overwrite weakest when learning
 
 ACTIVATION_THRESH = 9000  # activation threshold which triggers outgoing connections for a node
@@ -16,6 +19,11 @@ class Network(object):
     def __init__(self):
         self.connections = dict()
         self.state = NetworkState()
+        self.input_count = 0
+
+        # clear out any old state images
+        for f in glob.glob('./states/s*'):
+            os.remove(f)
 
     def get_connection_strength_mean(self):
         """
@@ -58,9 +66,12 @@ class Network(object):
         self.run()
 
         # read the network state
+        for node in self.state.nodes:
+            print node, '\t:', self.state.nodes[node]
+
         print self.state.get_statement()
 
-    def run(self, think_time=5):
+    def run(self, think_time=20):
         """
         interates over the entire network, propagating signals between nodes
         :param think_time: number of cycles to run the state
@@ -73,7 +84,7 @@ class Network(object):
             stren = connect.value
             if self.state.nodes[w1] > ACTIVATION_THRESH:
                 # send signal forward to next connection based on strength
-                self.state.nodes[w2] = stren + self.state.nodes[w2]
+                self.state.input_to_node(w2, stren)
 
                 # strengthen used connections
                 connect.strengthen()
@@ -125,7 +136,7 @@ class Network(object):
             newMin = mean - DESIRED_RANGE / 2
             scale = (newMax - newMin) / (maxi - mini)
             for conn in self.connections:
-                conn.value = (conn.value - mini) * scale + newMin
+                self.connections[conn].value = (self.connections[conn].value - mini) * scale + newMin
         # rng can't be too high?
 
         if verbose:
@@ -143,6 +154,25 @@ class Network(object):
             self.connections[format_connection_key(w1, w2)].strengthen()
         except KeyError:
             self.connections[format_connection_key(w1, w1)] = Connection()
+
+    def plot_state_file(self):
+        """
+        prints the next state file to appropriately numbered image.
+        """
+        self.state.plot_img('./states/s' + str(self.input_count) + '.jpg')
+        self.input_count += 1
+
+    def input_file(self, file_name):
+        """
+        Uses txt file as input. Tokenizes by line. Assumes each line ends with period ('.');
+         no other punctuation should be included.
+        """
+        lines = [line.rstrip('\n') for line in open(file_name)]
+        for line in lines:
+            lin = format_line(line)
+            self.learn_statement(lin)
+            self.run()
+            self.plot_state_file()
 
     #################################################
     ### OLD HALF-IMPLEMENTED FUNCTIONS BELOW HERE ###
@@ -184,3 +214,11 @@ def format_connection_key(w1, w2):
     :return:
     """
     return str(w1)+'|'+str(w2)
+
+def format_line(line):
+    """
+    changes a sentence into a properly formatted list
+    """
+    line = line.replace('?', '')
+    line = line.replace('.', '')
+    return line.split(' ')

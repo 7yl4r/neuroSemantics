@@ -4,8 +4,8 @@ from PIL import Image
 import pylab
 import math
 
-RESP_MAX_LEN = 50  # max number of semantic concepts (words) network yields in responses
-RESP_THRESH = 1000  # activation threshold which nodes must be above to be included in response
+RESP_MAX_LEN = 10  # max number of semantic concepts (words) network yields in responses
+RESP_THRESH = 5000  # activation threshold which nodes must be above to be included in response
 
 ACTIVATION_VALUE = 10000  # value which a node is given when activated
 
@@ -75,3 +75,13 @@ class NetworkState(object):
         maxi = max(self.nodes.values())
         mini = min(self.nodes.values())
         return int(maxi - mini), maxi, mini
+
+    def input_to_node(self, node_name, value):
+        """
+        inputs into node from another node.
+        """
+        if value <= 0:
+            print "WARN: cannot input negative (or 0) value to node."
+            return
+        else:
+            self.nodes[node_name] += int(value)

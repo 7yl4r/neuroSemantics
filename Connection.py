@@ -3,8 +3,8 @@ __author__ = 'tylar'
 import math
 
 INIT_VAL = 100  # starting value for a new connection
-DEGRADER = 50  # controls amount connections degrade over time
-STRENGTHENER = 50  # controls amount connections strengthe n with use
+DEGRADER = 25  # controls amount connections degrade over time
+STRENGTHENER = 50  # controls amount connections strengthen with use
 
 
 class Connection(object):

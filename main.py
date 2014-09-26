@@ -1,6 +1,6 @@
 __author__ = 'tylar'
 
-from Network import Network
+from Network import Network, format_line
 
 EXITS = ['exit', 'quit']
 
@@ -18,9 +18,7 @@ def prompt():
     if typ == STMT_TYPES.ERR:
         return prompt()
     else:
-        uIn = uIn.replace('?', '')
-        uIn = uIn.replace('.', '')
-        return typ, uIn.split(' ')
+        return typ, format_line(uIn)
 
 
 def check(uIn):
@@ -39,7 +37,7 @@ def check(uIn):
 
 
 network = Network()
-
+network.input_file('./input_scripts/base.txt')
 while True:
     typ, inp = prompt()
     if typ == STMT_TYPES.statement:
@@ -49,4 +47,4 @@ while True:
 
     # give the net some alone time to think... (and recover from i/o barrage)
     network.run()
-    network.state.plot_img('./net_state.jpg')
+    network.plot_state_file()
